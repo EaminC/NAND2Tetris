@@ -1,0 +1,193 @@
+# Project2 for Intro to Computer Systems 2025 spring
+
+**Yiming Cheng**
+
+**12450588**
+
+---
+
+[toc]
+
+
+
+
+
+
+
+## Result:
+
+1. HalfAdder$\boxed{work}$
+2. FullAdder$\boxed{work}$
+3. Add16$\boxed{work}$
+
+**note：[Parallel Add16](## Parallel Add16)**
+
+4. Inc16$\boxed{work}$
+5. ALU$\boxed{work}$
+
+![IMG_2583](/var/folders/7q/jjg58g6x03l8kk9z10ht_f240000gn/T/com.apple.useractivityd/shared-pasteboard/items/DB2FACEB-61C7-4ABE-BECB-5DFB40B2C6F9/IMG_2583.jpeg)
+
+## Details
+
+
+
+1. HalfAdder
+
+
+
+![image-20250117205112497](/Users/eamin/Library/Application Support/typora-user-images/image-20250117205112497.png)
+
+
+2. FullAdder
+
+
+
+![image-20250117205245761](/Users/eamin/Library/Application Support/typora-user-images/image-20250117205245761.png)
+
+3. Add16
+
+![image-20250117205821848](/Users/eamin/Library/Application Support/typora-user-images/image-20250117205821848.png)
+
+
+
+
+
+4. Inc16
+
+
+
+![image-20250117210953510](/Users/eamin/Library/Application Support/typora-user-images/image-20250117210953510.png)
+
+
+
+5. ALU
+
+![IMG_2583](/var/folders/7q/jjg58g6x03l8kk9z10ht_f240000gn/T/com.apple.useractivityd/shared-pasteboard/items/DB2FACEB-61C7-4ABE-BECB-5DFB40B2C6F9/IMG_2583.jpeg)
+
+![image-20250117215023316](/Users/eamin/Library/Application Support/typora-user-images/image-20250117215023316.png)
+
+
+
+
+
+## Parallel Add16
+
+Parallel can compute carry in advance and compute parallel making it more complex but faster
+
+```vhdl
+    // Step 1: Compute Generate (G) and Propagate (P) signals
+    And(a=a[0], b=b[0], out=G0);
+    Xor(a=a[0], b=b[0], out=P0);
+
+    And(a=a[1], b=b[1], out=G1);
+    Xor(a=a[1], b=b[1], out=P1);
+
+    And(a=a[2], b=b[2], out=G2);
+    Xor(a=a[2], b=b[2], out=P2);
+
+    And(a=a[3], b=b[3], out=G3);
+    Xor(a=a[3], b=b[3], out=P3);
+
+    And(a=a[4], b=b[4], out=G4);
+    Xor(a=a[4], b=b[4], out=P4);
+
+    And(a=a[5], b=b[5], out=G5);
+    Xor(a=a[5], b=b[5], out=P5);
+
+    And(a=a[6], b=b[6], out=G6);
+    Xor(a=a[6], b=b[6], out=P6);
+
+    And(a=a[7], b=b[7], out=G7);
+    Xor(a=a[7], b=b[7], out=P7);
+
+    And(a=a[8], b=b[8], out=G8);
+    Xor(a=a[8], b=b[8], out=P8);
+
+    And(a=a[9], b=b[9], out=G9);
+    Xor(a=a[9], b=b[9], out=P9);
+
+    And(a=a[10], b=b[10], out=G10);
+    Xor(a=a[10], b=b[10], out=P10);
+
+    And(a=a[11], b=b[11], out=G11);
+    Xor(a=a[11], b=b[11], out=P11);
+
+    And(a=a[12], b=b[12], out=G12);
+    Xor(a=a[12], b=b[12], out=P12);
+
+    And(a=a[13], b=b[13], out=G13);
+    Xor(a=a[13], b=b[13], out=P13);
+
+    And(a=a[14], b=b[14], out=G14);
+    Xor(a=a[14], b=b[14], out=P14);
+
+    And(a=a[15], b=b[15], out=G15);
+    Xor(a=a[15], b=b[15], out=P15);
+
+    // Step 2: Compute Carry signals (C) in parallel
+    Or(a=G0, b=false, out=C1); // C1 = G0
+
+    And(a=P1, b=C1, out=P1C1);
+    Or(a=G1, b=P1C1, out=C2);
+
+    And(a=P2, b=C2, out=P2C2);
+    Or(a=G2, b=P2C2, out=C3);
+
+    And(a=P3, b=C3, out=P3C3);
+    Or(a=G3, b=P3C3, out=C4);
+
+    And(a=P4, b=C4, out=P4C4);
+    Or(a=G4, b=P4C4, out=C5);
+
+    And(a=P5, b=C5, out=P5C5);
+    Or(a=G5, b=P5C5, out=C6);
+
+    And(a=P6, b=C6, out=P6C6);
+    Or(a=G6, b=P6C6, out=C7);
+
+    And(a=P7, b=C7, out=P7C7);
+    Or(a=G7, b=P7C7, out=C8);
+
+    And(a=P8, b=C8, out=P8C8);
+    Or(a=G8, b=P8C8, out=C9);
+
+    And(a=P9, b=C9, out=P9C9);
+    Or(a=G9, b=P9C9, out=C10);
+
+    And(a=P10, b=C10, out=P10C10);
+    Or(a=G10, b=P10C10, out=C11);
+
+    And(a=P11, b=C11, out=P11C11);
+    Or(a=G11, b=P11C11, out=C12);
+
+    And(a=P12, b=C12, out=P12C12);
+    Or(a=G12, b=P12C12, out=C13);
+
+    And(a=P13, b=C13, out=P13C13);
+    Or(a=G13, b=P13C13, out=C14);
+
+    And(a=P14, b=C14, out=P14C14);
+    Or(a=G14, b=P14C14, out=C15);
+
+    And(a=P15, b=C15, out=P15C15);
+    Or(a=G15, b=P15C15, out=C16); // Final carry is ignored
+
+    // Step 3: Compute Sum bits (S)
+    Xor(a=P0, b=false, out=out[0]); // out[0] = P0 ⊕ C0 (C0 = 0)
+    Xor(a=P1, b=C1, out=out[1]);
+    Xor(a=P2, b=C2, out=out[2]);
+    Xor(a=P3, b=C3, out=out[3]);
+    Xor(a=P4, b=C4, out=out[4]);
+    Xor(a=P5, b=C5, out=out[5]);
+    Xor(a=P6, b=C6, out=out[6]);
+    Xor(a=P7, b=C7, out=out[7]);
+    Xor(a=P8, b=C8, out=out[8]);
+    Xor(a=P9, b=C9, out=out[9]);
+    Xor(a=P10, b=C10, out=out[10]);
+    Xor(a=P11, b=C11, out=out[11]);
+    Xor(a=P12, b=C12, out=out[12]);
+    Xor(a=P13, b=C13, out=out[13]);
+    Xor(a=P14, b=C14, out=out[14]);
+    Xor(a=P15, b=C15, out=out[15]);
+```
+

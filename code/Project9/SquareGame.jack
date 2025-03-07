@@ -1,0 +1,145 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/09/Square/SquareGame.jack
+
+/**
+ * Implements the Square Dance game.
+ * In this game you can move a black square around the screen and
+ * change its size during the movement.
+ * In the beginning, the square is located at the top-left corner
+ * of the screen. The arrow keys are used to move the square.
+ * The 'z' & 'x' keys are used to decrement and increment the size.
+ * The 'q' key is used to quit the game.
+ */
+class SquareGame {
+
+    // The square
+    field Square square;
+
+    // The square's movement direction
+    field int direction; // 0=none,1=up,2=down,3=left,4=right
+
+    // Total score
+    field int totalScore;
+
+    // Game over flag
+    field boolean gameOver;
+
+    // Current level
+    field int level;
+
+    // Number of moves
+    field int moves;
+
+    // Target score for the current level
+    field int targetScore;
+
+    /** Constructs a new Square Game. */
+    constructor SquareGame new() {
+        let square = Square.new(0, 0, 30);
+        let direction = 0;
+        let totalScore = 0;
+        let gameOver = false;
+        let level = 1;
+        let moves = 0;
+        let targetScore = 140;
+        
+        // 初始化第一个目标点
+        do square.drawTarget(100, 100);
+
+        return this;
+    }
+
+    /** Deallocates the object's memory. */
+    method void dispose() {
+        do square.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    /** Starts the game. Handles inputs from the user that control
+     *  the square's movement, direction and size. */
+    method void run() {
+        var char key;
+        var boolean exit;
+
+        let exit = false;
+
+        while (~exit) {
+            // Display game information
+            do Output.moveCursor(0, 0);
+            do Output.printString("Level: ");
+            do Output.printInt(level);
+            do Output.moveCursor(0, 40);
+            do Output.printString("Moves: ");
+            do Output.printInt(moves);
+            
+            // Check game over condition
+            if (moves > 250) {  // If moves exceed 250
+                let gameOver = true;
+            }
+            
+            if (totalScore > targetScore) {  // If target score is reached, proceed to next level
+                let level = level + 1;
+                let targetScore = targetScore + 100;
+                let moves = 0;
+                // 正确的方式重置方块位置
+                do square.dispose();  // 先释放旧的方块
+                let square = Square.new(0, 0, 30);  // 创建新的方块
+                // 创建新的目标点
+                do square.drawTarget(200, 200);  // 在新的位置创建目标点
+            }
+
+            // Check if the game is over
+            if (gameOver) {
+                do Output.printString("Game Over! Total Score: ");
+                do Output.printInt(totalScore);
+                let exit = true;
+            }
+
+            // Get keyboard input
+            let key = Keyboard.keyPressed();
+            if (key = 81) {
+                let exit = true;
+            }
+            if (key = 131) {
+                do square.moveUp();
+            }
+            if (key = 133) {
+                do square.moveDown();
+            }
+            if (key = 130) {
+                do square.moveLeft();
+            }
+            if (key = 132) {
+                do square.moveRight();
+            }
+
+            // Calculate score based on movement
+            if ((key = 131) | (key = 133) | (key = 130) | (key = 132)) {
+                let moves = moves + 1;
+                // Give different scores based on situation
+                if (square.checkTarget()) {
+                    do updateScore(20);  // Get 20 points for reaching target
+                } else {
+                    do updateScore(1);   // Get 1 point for normal movement
+                }
+            }
+
+            do Sys.wait(50);
+        }
+            
+        return;
+	}
+
+    /** Updates the score */
+    method void updateScore(int points) {
+        let totalScore = totalScore + points;
+        // Display current score
+        do Output.moveCursor(0, 0);
+        do Output.printString("Score: ");
+        do Output.printInt(totalScore);
+        return;
+    }
+}

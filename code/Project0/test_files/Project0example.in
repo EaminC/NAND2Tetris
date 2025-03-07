@@ -1,0 +1,19 @@
+/* Draws a rectangle at the top-left corner of the screen.
+ The rectangle is 16 pixels wide and R0 pixels high. */
+
+(KBDLOOP)
+	@KBD	// loop until key pressed
+	D=M
+	@KBDLOOP
+	D;JEQ
+	
+	@50		// setup: rect will be 50 high
+	D=A
+	@R0
+
+
+
+
+
+
+
